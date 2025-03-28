@@ -1,6 +1,6 @@
 {
   "name": "gh-label-sync",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "This tool allows you to synchronize labels between two GitHub repositories. It retrieves the labels from a source repository and updates the labels in the target repository.",
   "type": "module",
   "author": {
