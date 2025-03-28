@@ -4,13 +4,6 @@ This tool allows you to synchronize labels between two GitHub repositories. It r
 
 It requires a GitHub access token with the necessary permissions to manage labels on GitHub repositories.
 
-
-# GitHub Labels Sync Tool
-
-This tool allows you to synchronize labels between two GitHub repositories. It retrieves the labels from a source repository and updates the labels in the target repository. 
-
-It requires a GitHub access token with the necessary permissions to manage labels on GitHub repositories.
-
 ## Setup
 
 ### Instalation 
