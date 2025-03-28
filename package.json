@@ -1,17 +1,21 @@
 {
-  "name": "gh-label-sync-rc",
-  "version": "0.0.9",
+  "name": "gh-label-sync",
+  "version": "0.0.1",
   "description": "This tool allows you to synchronize labels between two GitHub repositories. It retrieves the labels from a source repository and updates the labels in the target repository.",
   "type": "module",
-  "author": "Your Name",
+  "author": {
+    "name": "Tiago Ribeiro",
+    "email": "tiago.ribeiro@cogniwave.pt",
+    "url": "https://cogniwave.pt"
+  },
   "license": "AGPL-3.0-only",
-  "homepage": "https://ribeiro-tiago.github.io/nuxt-lazyload-files",
+  "homepage": "https://cogniwave.github.io/gh-label-sync",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Ribeiro-Tiago/nuxt-lazyload-files.git"
+    "url": "git+https://github.com/cogniwave/gh-label-sync.git"
   },
   "bugs": {
-    "url": "https://github.com/owner/project/issues"
+    "url": "https://github.com/cogniwave/gh-label-sync/issues"
   },
   "keywords": [
     "github",
@@ -31,8 +35,8 @@
   "scripts": {
     "dev": "bun run src/app.ts",
     "build": "tsc",
-    "publish": "bun run build && bun changelogen --release --publish --push",
-    "publish:beta": "bun run build && bun changelogen --publishTag rc --prerelease --nameSuffix rc --push"
+    "release": "bun run build && bun changelogen --release --publish --push",
+    "release:beta": "bun run build && bun changelogen --publishTag rc --prerelease --nameSuffix rc --push"
   },
   "devDependencies": {
     "@commander-js/extra-typings": "^13.1.0",
