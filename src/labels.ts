@@ -1,102 +1,97 @@
-// program.command('split')
-//   .description('Split a string into substrings and display as an array')
-//   .argument('<string>', 'string to split')
-//   .option('--first', 'display just the first substring')
-//   .option('-s, --separator <char>', 'separator character', ',')
-//   .action((str, options) => {
-//     const limit = options.first ? 1 : undefined;
-//     console.log(str.split(options.separator, limit));
-//   });
+import consola, { LogLevels } from "consola";
 
 import { SyncFn } from "./types/labels";
+import { name } from "../package.json";
 
-// const response = await fetch("https://bun.sh/api", {
-//   method: "POST",
-//   body: JSON.stringify({ message: "Hello from Bun!" }),
-//   headers: { "Content-Type": "application/json" },
-// });
+// todo: improve this whole code
 
-// const body = await response.json();
-// dotenv.config();
+interface GitHubLabel {
+  id: number;
+  node_id: string;
+  url: string;
+  name: string;
+  color: string;
+  default: boolean;
+  description: string;
+}
 
-// // Load environment variables
-// const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-// const ORG_NAME = process.env.ORG_NAME;
+const logger = consola.create({ level: LogLevels.verbose }).withTag(name);
+const BASE_URL = "https://api.github.com";
 
-// if (!GITHUB_TOKEN || !ORG_NAME) {
-//   console.error("Please set GITHUB_TOKEN and ORG_NAME in your .env file");
-//   process.exit(1);
-// }
+async function removePreviousLabels(repo: string, token: string) {
+  // implement this:
+  // - get all tags of repo
+  // - delete all of them one by one because there's no end point for mass remove
+}
 
-// // GitHub API base URL
-// const GITHUB_API_BASE_URL = "https://api.github.com";
+async function updateLabels(repo: string, labels: GitHubLabel[], token: string, cleanup: boolean) {
+  if (cleanup) {
+    removePreviousLabels(repo, token);
+  }
 
-// // Labels to propagate
-// const LABELS = [
-//   { name: "bug", color: "d73a4a", description: "Something isn't working" },
-//   { name: "enhancement", color: "a2eeef", description: "New feature or request" },
-//   { name: "help wanted", color: "008672", description: "Extra attention is needed" },
-// ];
+  logger.info(`Updating labels ${repo}...`);
 
-// const axiosInstance = axios.create({
-//   baseURL: GITHUB_API_BASE_URL,
-//   headers: {
-//     Authorization: `Bearer ${GITHUB_TOKEN}`,
-//     Accept: "application/vnd.github+json",
-//   },
-// });
+  await Promise.all(
+    labels.map((l) => {
+      return new Promise((resolve, reject) => {
+        fetch(`${BASE_URL}/repos/${repo}/labels`, {
+          method: "post",
+          body: JSON.stringify({
+            name: l.name,
+            color: l.color,
+            description: l.description,
+          }),
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+        })
+          .then(async (response) => {
+            const json = await response.json();
+            console.log(json.status);
 
-// async function getRepositories(): Promise<string[]> {
-//   try {
-//     const response = await axiosInstance.get(`/orgs/${ORG_NAME}/repos`, {
-//       params: { per_page: 100 },
-//     });
+            if (response.status !== 201) {
+              reject(json);
+            } else {
+              resolve(json);
+            }
+          })
+          .catch(reject);
+      });
+    }),
+  );
 
-//     return response.data.map((repo: any) => repo.name);
-//   } catch (error) {
-//     console.error("Error fetching repositories:", error.response?.data || error.message);
-//     throw error;
-//   }
-// }
+  logger.info(`Updated labels for ${repo}`);
+}
 
-// async function createOrUpdateLabel(repo: string, label: { name: string; color: string; description: string }) {
-//   try {
-//     await axiosInstance.patch(`/repos/${ORG_NAME}/${repo}/labels/${encodeURIComponent(label.name)}`, label);
-//     console.log(`Updated label "${label.name}" in repository "${repo}".`);
-//   } catch (error: any) {
-//     if (error.response?.status === 404) {
-//       try {
-//         await axiosInstance.post(`/repos/${ORG_NAME}/${repo}/labels`, label);
-//         console.log(`Created label "${label.name}" in repository "${repo}".`);
-//       } catch (creationError) {
-//         console.error(`Error creating label "${label.name}" in repository "${repo}":`, creationError.response?.data || creationError.message);
-//       }
-//     } else {
-//       console.error(`Error updating label "${label.name}" in repository "${repo}":`, error.response?.data || error.message);
-//     }
-//   }
-// }
+const getNewLabels = async (repo: string, token: string) => {
+  const response = await fetch(`${BASE_URL}/repos/${repo}/labels`, {
+    method: "get",
+    headers: { "Content-Type": "application/vnd.github+json", Authorization: `Bearer ${token}` },
+  });
 
-// async function propagateLabels() {
-//   try {
-//     const repositories = await getRepositories();
+  return (await response.json()) as GitHubLabel[];
+};
 
-//     for (const repo of repositories) {
-//       for (const label of LABELS) {
-//         await createOrUpdateLabel(repo, label);
-//       }
-//     }
+export const sync: SyncFn = async function (source, target, options) {
+  const token = options.token || process.env.GITHUB_TOKEN;
+  if (!token) {
+    logger.error("No token specified and couldn't find any in environment");
+    return;
+  }
 
-//     console.log("Label propagation completed.");
-//   } catch (error) {
-//     console.error("Error during label propagation:", error.message);
-//   }
-// }
+  if (!options.verbose) {
+    logger.level = LogLevels.warn;
+  }
 
-// // Start the process
-// propagateLabels();
+  try {
+    const newLabels = await getNewLabels(source, token);
 
-export const sync: SyncFn = async function (source, origin, options) {
-  // console.log("aqui", this.args, this.opts());
-  console.log("aqui", source, origin, options);
+    await updateLabels(target, newLabels, token, options.clean ?? false);
+
+    logger.success("Labels sync'd.");
+  } catch (error) {
+    logger.error("Error during label sync:", error);
+  }
 };

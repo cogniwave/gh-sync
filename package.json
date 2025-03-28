@@ -1,6 +1,7 @@
 {
   "name": "gh-label-sync",
   "version": "0.0.1",
+  "description": "-",
   "module": "app.ts",
   "type": "module",
   "scripts": {
@@ -13,6 +14,7 @@
     "@types/bun": "latest",
     "@typescript-eslint/eslint-plugin": "^8.28.0",
     "@typescript-eslint/parser": "^8.28.0",
+    "consola": "^3.4.2",
     "eslint-config-prettier": "^10.1.1"
   },
   "peerDependencies": {
