@@ -1,8 +1,10 @@
 {
   "name": "gh-label-sync",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "This tool allows you to synchronize labels between two GitHub repositories. It retrieves the labels from a source repository and updates the labels in the target repository.",
   "type": "module",
+  "author": "Your Name",
+  "license": "AGPL-3.0-only",
   "homepage": "https://ribeiro-tiago.github.io/nuxt-lazyload-files",
   "repository": {
     "type": "git",
@@ -28,7 +30,8 @@
   "packageManager": "bun@1.2.5",
   "scripts": {
     "dev": "bun run src/app.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "publish": "bun run build && changelogen changelogen --publishTag rc --prerelease --nameSuffix rc --push"
   },
   "devDependencies": {
     "@commander-js/extra-typings": "^13.1.0",
@@ -36,11 +39,12 @@
     "@types/bun": "latest",
     "@typescript-eslint/eslint-plugin": "^8.28.0",
     "@typescript-eslint/parser": "^8.28.0",
+    "changelogen": "^0.6.1",
     "consola": "^3.4.2",
     "eslint-config-prettier": "^10.1.1"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "^5.8.2"
   },
   "dependencies": {
     "commander": "^13.1.0"

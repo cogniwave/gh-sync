@@ -95,3 +95,62 @@ export const sync: SyncFn = async function (source, target, options) {
     logger.error("Error during label sync:", error);
   }
 };
+
+// todo: add support for all repos in org instead of just 1
+// export const sync: SyncFn = async function (source, target, options) {
+//   const token = options.token || process.env.GITHUB_TOKEN;
+//   if (!token) {
+//     logger.error("No token specified and couldn't find any in environment");
+//     return;
+//   }
+
+//   if (!options.verbose) {
+//     logger.level = LogLevels.warn;
+//   }
+
+//   try {
+//     const newLabels = await getNewLabels(source, token);
+//     const repos = await getRepositories(source, token);
+
+//     await Promise.all(
+//       repos.map((repo) => {
+//         return updateLabels(repo, newLabels, token, options.clean ?? false);
+//       }),
+//     );
+
+//     logger.log("Label propagation completed.");
+//   } catch (error) {
+//     logger.error("Error during label sync:", error);
+//   }
+// };
+
+// async function updateLabels(repo: string, labels: GitHubLabel[], token: string, cleanup: boolean) {
+//   if (cleanup) {
+//     // cleanup existing labels
+//   }
+
+//   await Promise.all(
+//     labels.map((l) => {
+//       fetch(`${BASE_URL}/repos/${repo}/labels`, {
+//         method: "post",
+//         // @ts-ignore
+//         body: l,
+//         headers: { "Content-Type": "application/vnd.github+json", Authorization: `Bearer ${token}` },
+//       });
+//     }),
+//   );
+
+//   logger.info(`Updated labels for ${repo}`);
+// }
+
+// todo: type result
+// async function getRepositories(org: string, token: string): Promise<any[]> {
+//   logger.info(`Fetching repos of org ${org}`);
+
+//   return await (
+//     await fetch(`${BASE_URL}/orgs/${org}/repos`, {
+//       method: "get",
+//       headers: { "Content-Type": "application/vnd.github+json", Authorization: `Bearer ${token}` },
+//     })
+//   ).json();
+// }

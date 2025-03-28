@@ -91,7 +91,7 @@ There are still improvements needed on this:
 - sync multiple repos at the same time
 - support for repos in org
 - deployment flow
-
+- add proper versioning with 
 
 ## Development 
 
