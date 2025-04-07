@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.1.2
+
+
+### 🏡 Chore
+
+- Update workflow ([b4159be](https://github.com/cogniwave/gh-sync/commit/b4159be))
+
+### ❤️ Contributors
+
+- Tiago Ribeiro <tiago.ribeiro@cogniwave.pt>
+
 ## v1.1.1
 
 
