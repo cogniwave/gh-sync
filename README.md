@@ -1,4 +1,4 @@
-# gh-label-sync
+# gh-sync
 
 This tool allows you to synchronize labels between two GitHub repositories. It retrieves the labels from a source repository and updates the labels in the target repository.
 
