@@ -33,12 +33,18 @@ new Command()
   .version(version)
   .showHelpAfterError("(add --help for additional information)")
 
-  .argument("origin", "Repository where the labels we want to keep are: (`{owner}/{repository}`)")
-  .argument("destination", "Repository whose labels we're updating (`{owner}/{repository}`)")
+  .argument("origin", "Repository that has the configs you want to sync: (`{owner}/{repository}`)")
+  .argument("destination", "Repository where you want to update the configs: (`{owner}/{repository}`)")
 
-  .option("--token <token>", "GitHub token to be able to do stuff in GutHub")
-  .option("--token-origin <token>", "GitHub token to be able to do stuff in GutHub")
-  .option("--token-destination <token>", "GitHub token to be able to do stuff in GutHub")
+  .option(
+    "--token <token>",
+    "Auth token to allow gh-sync to do it's thing. Use this if the token is the same for both origin and destination repositories",
+  )
+  .option("--token-origin <token>", "Auth token of the origin repository, to allow gh-sync to do it's thing")
+  .option(
+    "--token-destination <token>",
+    "Auth token of the destination repository,to allow gh-sync to do it's thing to allow gh-sync to do it's thing",
+  )
   .option("--verbose", `Runs ${name} in verbose mode`, false)
 
   .action(async function (origin, destination, options: SyncOptions) {
@@ -83,10 +89,21 @@ new Command()
 
     logger.box("Before we proceed, just double checking all the actions..");
 
+    // confirm things
     if (labelSync) {
       labelSync.confirmChoices();
-      labelSync.sync();
     }
+
+    logger.info("Starting sync process...");
+
+    // process things
+    if (labelSync) {
+      logger.info("Syncing labels...");
+      labelSync.sync();
+      logger.info("Finished syncing labels");
+    }
+
+    logger.success("GitHub configurations sync'd");
   })
 
   .parse();
