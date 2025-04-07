@@ -36,16 +36,13 @@ new Command()
   .argument("origin", "Repository that has the configs you want to sync: (`{owner}/{repository}`)")
   .argument("destination", "Repository where you want to update the configs: (`{owner}/{repository}`)")
 
+  .option("--verbose", `Runs ${name} in verbose mode`, false)
   .option(
     "--token <token>",
     "Auth token to allow gh-sync to do it's thing. Use this if the token is the same for both origin and destination repositories",
   )
   .option("--token-origin <token>", "Auth token of the origin repository, to allow gh-sync to do it's thing")
-  .option(
-    "--token-destination <token>",
-    "Auth token of the destination repository,to allow gh-sync to do it's thing to allow gh-sync to do it's thing",
-  )
-  .option("--verbose", `Runs ${name} in verbose mode`, false)
+  .option("--token-destination <token>", "Auth token of the destination repository, to allow gh-sync to do it's thing")
 
   .action(async function (origin, destination, options: SyncOptions) {
     if (options.verbose) {
@@ -68,8 +65,16 @@ new Command()
       //    pull requests read / write; (delete labels)
       //    metadata read (mandatory)
       { label: "Labels", value: Action.LABELS, hint: "Check documentation for necessary permissions" },
-      { label: "Workflows", value: Action.WORKFLOWS, hint: "Check documentation for necessary permissions" },
-      { label: "Branch rules", value: Action.BRANCH_RULES, hint: "Check documentation for necessary permissions" },
+      {
+        label: "Workflows (coming soon)",
+        value: Action.WORKFLOWS,
+        hint: "Check documentation for necessary permissions",
+      },
+      {
+        label: "Branch rules (coming soon)",
+        value: Action.BRANCH_RULES,
+        hint: "Check documentation for necessary permissions",
+      },
     ]);
 
     let labelSync: LabelSync | null = null;
