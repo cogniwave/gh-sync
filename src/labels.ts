@@ -3,23 +3,29 @@ import logger from "./log";
 import type { GitHubLabel } from "./types/labels";
 import type { Tokens } from "./types";
 
-const mapLabelsToOptions = (labels: GitHubLabel[]) => {
+const mapLabelsToOptions = (labels: GitHubLabel[]): Array<{ label: string; value: number }> => {
   return labels.map((label) => ({ label: label.name, value: label.id }));
 };
 
-const mapLabelsToConfirmation = (message: string, labels: GitHubLabel[]) => {
+const mapLabelsToConfirmation = (message: string, labels: GitHubLabel[]): string => {
   return `${message}:\n> ${labels.map((l) => l.name).join("\n  > ")}`;
 };
 
-const getLabels = async (repo: string, token: string) => request<GitHubLabel[]>(`${repo}/labels`, "get", token);
+const getLabels = async (repo: string, token: string): Promise<GitHubLabel[]> => {
+  return request<GitHubLabel[]>(`${repo}/labels`, "get", token);
+};
 
 export default class LabelSync {
   private toSync: GitHubLabel[] = [];
   private toDelete: GitHubLabel[] = [];
 
-  constructor(private origin: string, private destination: string, private tokens: Tokens) {}
+  constructor(
+    private origin: string,
+    private destination: string,
+    private tokens: Tokens,
+  ) {}
 
-  public async prepare() {
+  public async prepare(): Promise<void> {
     // stuff with labels
     const [newLabels, existingLabels] = await Promise.all([
       getLabels(this.origin, this.tokens.originToken),
@@ -46,7 +52,7 @@ export default class LabelSync {
     this.toSync = toSync.length ? newLabels.filter((l) => toSync.includes(l.id)) : newLabels;
   }
 
-  public async deleteLabels(labels: GitHubLabel[]) {
+  public async deleteLabels(labels: GitHubLabel[]): Promise<void> {
     logger.info(`Deleting labels on \`${this.destination}\`...`);
 
     await Promise.all(
@@ -56,7 +62,7 @@ export default class LabelSync {
     logger.info(`Labels deleted on ${this.destination}`);
   }
 
-  public async createLabels(labels: GitHubLabel[]) {
+  public async createLabels(labels: GitHubLabel[]): Promise<void> {
     logger.info(`Creating labels on ${this.origin}...`);
 
     await Promise.all(
@@ -73,7 +79,7 @@ export default class LabelSync {
     logger.info(`Labels created on ${this.origin}`);
   }
 
-  public async confirmChoices() {
+  public async confirmChoices(): Promise<boolean> {
     // confirm label stuff
     let confirmed = await logger.prompt(
       mapLabelsToConfirmation(`These will be added to \`${this.destination}\` from \`${this.origin}\``, this.toSync),
@@ -102,7 +108,7 @@ export default class LabelSync {
     return true;
   }
 
-  public async sync() {
+  public async sync(): Promise<void> {
     // process
     if (this.toDelete.length) {
       await this.deleteLabels(this.toDelete);

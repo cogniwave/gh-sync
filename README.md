@@ -6,7 +6,8 @@ It requires a GitHub access token with the necessary permissions to manage label
 
 ## Setup
 
-### Installation 
+### Installation
+
 Install it globally or locally with whatever package manager you use
 
 ```bash
@@ -30,6 +31,7 @@ pnpm gh-sync
 ### Token
 
 Before using the tool, you need to create a GitHub access token with the following required permissions:
+
 - **issues:read and write**: Used to get labels and create new ones
 - **pull requests:read and write**: Used to delete tokens in destination repository if you wish
 
@@ -82,7 +84,7 @@ gh-sync-labels <origin> <target> [options]
    gh-sync-labels owner/repo-a owner/repo-b --verbose
    ```
 
-## Development 
+## Development
 
 ```bash
 bun install

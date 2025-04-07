@@ -2,7 +2,7 @@ name: Code checks
 
 on:
   push:
-    branches-ignore: 
+    branches-ignore:
       - master
     paths:
       - src/**
@@ -10,7 +10,7 @@ on:
       - package.json
       - .github/workflows/code-quality.yml
   pull_request:
-    branches-ignore: 
+    branches-ignore:
       - master
     paths:
       - src/**
@@ -72,3 +72,6 @@ jobs:
 
       - name: Lint
         run: bun run lint
+
+      - name: Lint
+        run: bun run format

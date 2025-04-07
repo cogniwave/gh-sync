@@ -2,7 +2,12 @@ import logger from "./log";
 
 const BASE_URL = "https://api.github.com";
 
-export const request = async <T>(endpoint: string, method: string, token: string, body?: BodyInit | null) => {
+export const request = async <T>(
+  endpoint: string,
+  method: string,
+  token: string,
+  body?: BodyInit | null,
+): Promise<T> => {
   return new Promise<T>((resolve, reject) => {
     fetch(`${BASE_URL}/repos/${endpoint}`, {
       method,
@@ -14,7 +19,7 @@ export const request = async <T>(endpoint: string, method: string, token: string
       },
     })
       .then(async (response) => {
-        const json = await response.json();
+        const json = (await response.json()) as T;
 
         if ([200, 201, 204].includes(response.status)) {
           resolve(json);

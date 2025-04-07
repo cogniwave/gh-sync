@@ -6,7 +6,7 @@ on:
     branches:
       - dev
       - master
-    types: 
+    types:
       - completed
 
   # Allows you to run this workflow manually from the Actions tab
@@ -24,7 +24,7 @@ jobs:
   on-failure:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    steps: 
+    steps:
       - name: Failed workflow
         run: |
           echo "Code checks workflow failed"

@@ -36,6 +36,5 @@ export default [
       ],
     },
   },
-  ...new FlatCompat().extends("eslint:recommended"),
   prettierConfig,
 ];

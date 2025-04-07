@@ -40,6 +40,9 @@
   "scripts": {
     "dev": "bun run src/app.ts",
     "build": "tsc",
+    "lint": "eslint ./src",
+    "lint:fix": "bun run eslint --fix",
+    "format": "prettier . --write",
     "release": "bun run build && bun changelogen --release --publish --push",
     "release:beta": "bun run build && bun changelogen --publishTag rc --prerelease --nameSuffix rc --push"
   },
@@ -51,7 +54,9 @@
     "@typescript-eslint/parser": "^8.28.0",
     "changelogen": "^0.6.1",
     "consola": "^3.4.2",
-    "eslint-config-prettier": "^10.1.1"
+    "eslint": "^9.24.0",
+    "eslint-config-prettier": "^10.1.1",
+    "prettier": "^3.5.3"
   },
   "peerDependencies": {
     "typescript": "^5.8.2"
