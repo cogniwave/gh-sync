@@ -1,7 +1,7 @@
 {
-  "name": "gh-label-sync",
+  "name": "gh-sync",
   "version": "0.1.1",
-  "description": "This tool allows you to synchronize labels between two GitHub repositories. It retrieves the labels from a source repository and updates the labels in the target repository.",
+  "description": "This tool allows you to synchronize configurations (labels, workflows, rules, etc) between two GitHub repositories",
   "type": "module",
   "author": {
     "name": "Tiago Ribeiro",
@@ -9,13 +9,13 @@
     "url": "https://cogniwave.pt"
   },
   "license": "AGPL-3.0-only",
-  "homepage": "https://cogniwave.github.io/gh-label-sync",
+  "homepage": "https://cogniwave.github.io/gh-sync",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cogniwave/gh-label-sync.git"
+    "url": "git+https://github.com/cogniwave/gh-sync.git"
   },
   "bugs": {
-    "url": "https://github.com/cogniwave/gh-label-sync/issues"
+    "url": "https://github.com/cogniwave/gh-sync/issues"
   },
   "keywords": [
     "github",
