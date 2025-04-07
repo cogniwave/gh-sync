@@ -1,5 +1,11 @@
 # gh-sync
 
+[![Latest version][npm-version-src]][npm-version-href] [![npm downloads][npm-downloads-src]][npm-downloads-href] [![npm][npm-src]][npm-href] [![Publish workflow][publish-workflow-src]][publish-workflow-href] [![Documentation - Powered by GitBook][gitbook-src]][gitbook-href]
+
+- [✨ Release Notes](/CHANGELOG.md)
+- [📖 Documentation - powered by GitBook](https://cogniwave.gitbook.io/gh-sync)
+
+
 This tool allows you to synchronize labels between two GitHub repositories. It retrieves the labels from a source repository and updates the labels in the target repository.
 
 It requires a GitHub access token with the necessary permissions to manage labels on GitHub repositories.
@@ -95,3 +101,16 @@ To run:
 ```bash
 bun dev
 ```
+
+<!-- Badges -->
+
+[npm-version-src]: https://img.shields.io/npm/v/@cogniwave/gh-sync/latest.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-version-href]: https://npmjs.com/package/@cogniwave/gh-sync
+[npm-downloads-src]: https://img.shields.io/npm/dm/@cogniwave/gh-sync.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-downloads-href]: https://npm.chart.dev/@cogniwave/gh-sync
+[npm-src]: https://img.shields.io/npm/l/@cogniwave/gh-sync.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-href]: https://npmjs.com/package/@cogniwave/gh-sync
+[publish-workflow-src]: https://img.shields.io/github/actions/workflow/status/cogniwave/gh-sync/publish.yml?branch=master
+[publish-workflow-href]: https://github.com/cogniwave/gh-sync/actions/workflows/publish.yml
+[gitbook-src]: https://img.shields.io/static/v1?message=Documented%20on%20GitBook&logo=gitbook&logoColor=ffffff&label=%20&labelColor=5c5c5c&color=3F89A1
+[gitbook-href]: https://gitbook.com/
