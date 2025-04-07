@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.1.1
+
+
+### 🩹 Fixes
+
+- Allow tool to be executed ([76f79d0](https://github.com/cogniwave/gh-sync/commit/76f79d0))
+
+### ❤️ Contributors
+
+- Tiago Ribeiro <tiago.ribeiro@cogniwave.pt>
+
 ## v1.1.0
 
 [compare changes](https://github.com/cogniwave/gh-sync/compare/v0.1.1...v1.1.0)
