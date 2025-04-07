@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.1.3
+
+
+### 🏡 Chore
+
+- Add links and badges to readme ([5f3ad49](https://github.com/cogniwave/gh-sync/commit/5f3ad49))
+
+### ❤️ Contributors
+
+- Tiago Ribeiro <tiago.ribeiro@cogniwave.pt>
+
 ## v1.1.2
 
 
