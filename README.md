@@ -11,10 +11,10 @@ It requires a GitHub access token with the necessary permissions to manage label
 Install it globally or locally with whatever package manager you use
 
 ```bash
-npm install -g gh-sync
-pnpm add -g gh-sync
-yarn global add gh-sync
-bun add gh-sync
+npm install -g @cogniwave/gh-sync
+pnpm add -g @cogniwave/gh-sync
+yarn global add @cogniwave/gh-sync
+bun add @cogniwave/gh-sync
 ```
 
 ### Direct Execution with npx (or other runners)
@@ -22,10 +22,10 @@ bun add gh-sync
 If you prefer not to install the tool globally, you can run it directly using:
 
 ```bash
-npx gh-sync
-bunx gh-sync
-yarn dlx gh-sync
-pnpm gh-sync
+npx @cogniwave/gh-sync
+bunx @cogniwave/gh-sync
+yarn dlx @cogniwave/gh-sync
+pnpm @cogniwave/gh-sync
 ```
 
 ### Token
@@ -42,7 +42,7 @@ Once you have your GitHub token, you can use the tool to sync labels between rep
 ### Command Syntax
 
 ```bash
-gh-sync-labels <origin> <target> [options]
+@cogniwave/gh-sync <origin> <target> [options]
 ```
 
 ### Arguments
@@ -62,26 +62,26 @@ gh-sync-labels <origin> <target> [options]
 1. To synchronize labels from `repo-a` to `repo-b`:
 
    ```bash
-   gh-sync-labels owner/repo-a owner/repo-b --token your_github_token
+   @cogniwave/gh-sync owner/repo-a owner/repo-b --token your_github_token
    ```
 
 2. To synchronize labels from `repo-a` to `repo-b` with implicit token:
 
    ```bash
    export $GITHUB_TOKEN = your_github_token
-   gh-sync-labels owner/repo-a owner/repo-b
+   @cogniwave/gh-sync owner/repo-a owner/repo-b
    ```
 
 3. To synchronize labels from `repo-a` to `repo-b` but different tokens:
 
    ```bash
-   gh-sync-labels owner/repo-a owner/repo-b --token-origin repo-a_token --token-destination repo-b_token
+   @cogniwave/gh-sync owner/repo-a owner/repo-b --token-origin repo-a_token --token-destination repo-b_token
    ```
 
 4. To run the tool in verbose mode:
 
    ```bash
-   gh-sync-labels owner/repo-a owner/repo-b --verbose
+   @cogniwave/gh-sync owner/repo-a owner/repo-b --verbose
    ```
 
 ## Development
