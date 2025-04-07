@@ -6,14 +6,14 @@ It requires a GitHub access token with the necessary permissions to manage label
 
 ## Setup
 
-### Instalation 
+### Installation 
 Install it globally or locally with whatever package manager you use
 
 ```bash
-npm install -g gh-sync-labels
-pnpm add -g gh-sync-labels
-yarn global add gh-sync-labels
-bun add gh-sync-labels
+npm install -g gh-sync
+pnpm add -g gh-sync
+yarn global add gh-sync
+bun add gh-sync
 ```
 
 ### Direct Execution with npx (or other runners)
@@ -21,10 +21,10 @@ bun add gh-sync-labels
 If you prefer not to install the tool globally, you can run it directly using:
 
 ```bash
-npx gh-sync-labels
-bunx gh-sync-labels
-yarn dlx gh-sync-labels
-pnpm gh-sync-labels
+npx gh-sync
+bunx gh-sync
+yarn dlx gh-sync
+pnpm gh-sync
 ```
 
 ### Token
