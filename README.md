@@ -30,9 +30,8 @@ pnpm gh-sync-labels
 ### Token
 
 Before using the tool, you need to create a GitHub access token with the following required permissions:
-- **repo**: To manage repositories (read and write labels).
-  - **repo:status**: To get the status of repository labels.
-  - **repo:labels**: To view and modify the labels of a repository.
+- **issues:read and write**: Used to get labels and create new ones
+- **pull requests:read and write**: Used to delete tokens in destination repository if you wish
 
 ## Usage
 
@@ -51,9 +50,10 @@ gh-sync-labels <origin> <target> [options]
 
 ### Options
 
-- `-t, --token <string>`: The GitHub token required to interact with GitHub's API. Ensure your token has the necessary permissions (`repo`)
-If no token option is provided, *gh-sync-labels* will look for it in your environment variables under `GITHUB_TOKEN`
 - `--verbose`: Runs the tool in verbose mode, providing detailed logs about the operations being performed.
+- `-t, --token <string>`: Auth token to allow gh-sync to do it's thing. Use this if the token is the same for both origin and destination repositories"
+- `--token-origin`: Auth token of the origin repository, to allow gh-sync to do it's thing
+- `--token-destination`: Auth token of the destination repository, to allow gh-sync to do it's thing
 
 ### Example Usage
 
@@ -70,21 +70,17 @@ If no token option is provided, *gh-sync-labels* will look for it in your enviro
    gh-sync-labels owner/repo-a owner/repo-b
    ```
 
-2. To run the tool in verbose mode:
+3. To synchronize labels from `repo-a` to `repo-b` but different tokens:
+
+   ```bash
+   gh-sync-labels owner/repo-a owner/repo-b --token-origin repo-a_token --token-destination repo-b_token
+   ```
+
+4. To run the tool in verbose mode:
 
    ```bash
    gh-sync-labels owner/repo-a owner/repo-b --verbose
    ```
-
-
-## Disclaimer
-
-There are still improvements needed on this: 
-- proper documentation
-- sync multiple repos at the same time
-- support for repos in org
-- deployment flow
-- add proper versioning with 
 
 ## Development 
 
