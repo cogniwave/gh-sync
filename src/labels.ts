@@ -1,156 +1,113 @@
-import consola, { LogLevels } from "consola";
+import { promptMultiple, request } from "./io";
+import logger from "./log";
+import type { GitHubLabel } from "./types/labels";
+import type { Tokens } from "./types";
 
-import { SyncFn } from "./types/labels";
-import { name } from "../package.json";
-
-// todo: improve this whole code
-
-interface GitHubLabel {
-  id: number;
-  node_id: string;
-  url: string;
-  name: string;
-  color: string;
-  default: boolean;
-  description: string;
-}
-
-const logger = consola.create({ level: LogLevels.verbose }).withTag(name);
-const BASE_URL = "https://api.github.com";
-
-async function removePreviousLabels(repo: string, token: string) {
-  // implement this:
-  // - get all tags of repo
-  // - delete all of them one by one because there's no end point for mass remove
-}
-
-async function updateLabels(repo: string, labels: GitHubLabel[], token: string, cleanup: boolean) {
-  if (cleanup) {
-    removePreviousLabels(repo, token);
-  }
-
-  logger.info(`Updating labels ${repo}...`);
-
-  await Promise.all(
-    labels.map((l) => {
-      return new Promise((resolve, reject) => {
-        fetch(`${BASE_URL}/repos/${repo}/labels`, {
-          method: "post",
-          body: JSON.stringify({
-            name: l.name,
-            color: l.color,
-            description: l.description,
-          }),
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-            "X-GitHub-Api-Version": "2022-11-28",
-          },
-        })
-          .then(async (response) => {
-            const json = await response.json();
-            console.log(json.status);
-
-            if (response.status !== 201) {
-              reject(json);
-            } else {
-              resolve(json);
-            }
-          })
-          .catch(reject);
-      });
-    }),
-  );
-
-  logger.info(`Updated labels for ${repo}`);
-}
-
-const getNewLabels = async (repo: string, token: string) => {
-  const response = await fetch(`${BASE_URL}/repos/${repo}/labels`, {
-    method: "get",
-    headers: { "Content-Type": "application/vnd.github+json", Authorization: `Bearer ${token}` },
-  });
-
-  return (await response.json()) as GitHubLabel[];
+const mapLabelsToOptions = (labels: GitHubLabel[]) => {
+  return labels.map((label) => ({ label: label.name, value: label.id }));
 };
 
-export const sync: SyncFn = async function (source, target, options) {
-  const token = options.token || process.env.GITHUB_TOKEN;
-  if (!token) {
-    logger.error("No token specified and couldn't find any in environment");
-    return;
-  }
-
-  if (!options.verbose) {
-    logger.level = LogLevels.warn;
-  }
-
-  try {
-    const newLabels = await getNewLabels(source, token);
-
-    await updateLabels(target, newLabels, token, options.clean ?? false);
-
-    logger.success("Labels sync'd.");
-  } catch (error) {
-    logger.error("Error during label sync:", error);
-  }
+const mapLabelsToConfirmation = (message: string, labels: GitHubLabel[]) => {
+  return `${message}:\n> ${labels.map((l) => l.name).join("\n  > ")}`;
 };
 
-// todo: add support for all repos in org instead of just 1
-// export const sync: SyncFn = async function (source, target, options) {
-//   const token = options.token || process.env.GITHUB_TOKEN;
-//   if (!token) {
-//     logger.error("No token specified and couldn't find any in environment");
-//     return;
-//   }
+const getLabels = async (repo: string, token: string) => request<GitHubLabel[]>(`${repo}/labels`, "get", token);
 
-//   if (!options.verbose) {
-//     logger.level = LogLevels.warn;
-//   }
+export default class LabelSync {
+  private toSync: GitHubLabel[] = [];
+  private toDelete: GitHubLabel[] = [];
 
-//   try {
-//     const newLabels = await getNewLabels(source, token);
-//     const repos = await getRepositories(source, token);
+  constructor(private origin: string, private destination: string, private tokens: Tokens) {}
 
-//     await Promise.all(
-//       repos.map((repo) => {
-//         return updateLabels(repo, newLabels, token, options.clean ?? false);
-//       }),
-//     );
+  public async prepare() {
+    // stuff with labels
+    const [newLabels, existingLabels] = await Promise.all([
+      getLabels(this.origin, this.tokens.originToken),
+      getLabels(this.destination, this.tokens.destToken),
+    ]);
 
-//     logger.log("Label propagation completed.");
-//   } catch (error) {
-//     logger.error("Error during label sync:", error);
-//   }
-// };
+    if (existingLabels.length) {
+      const toKeep = await promptMultiple<number[]>(
+        `Which of these labels do you want to keep in \`${this.destination}\`? \n(You can choose multiple, leave empty to keep all)`,
+        // @ts-expect-error consola expects id to be int, but in our case it's string
+        mapLabelsToOptions(existingLabels),
+      );
 
-// async function updateLabels(repo: string, labels: GitHubLabel[], token: string, cleanup: boolean) {
-//   if (cleanup) {
-//     // cleanup existing labels
-//   }
+      // delete all tags in destination
+      this.toDelete = toKeep.length ? existingLabels.filter((l) => !toKeep.includes(l.id)) : existingLabels;
+    }
 
-//   await Promise.all(
-//     labels.map((l) => {
-//       fetch(`${BASE_URL}/repos/${repo}/labels`, {
-//         method: "post",
-//         // @ts-ignore
-//         body: l,
-//         headers: { "Content-Type": "application/vnd.github+json", Authorization: `Bearer ${token}` },
-//       });
-//     }),
-//   );
+    const toSync = await promptMultiple<number[]>(
+      `Which ones do you want to sync to \`${this.destination}\`? \n(You can choose multiple, leave empty to sync all)`,
+      // @ts-expect-error consola expects id to be int, but in our case it's string
+      mapLabelsToOptions(newLabels),
+    );
 
-//   logger.info(`Updated labels for ${repo}`);
-// }
+    this.toSync = toSync.length ? newLabels.filter((l) => toSync.includes(l.id)) : newLabels;
+  }
 
-// todo: type result
-// async function getRepositories(org: string, token: string): Promise<any[]> {
-//   logger.info(`Fetching repos of org ${org}`);
+  public async deleteLabels(labels: GitHubLabel[]) {
+    logger.info(`Deleting labels on \`${this.destination}\`...`);
 
-//   return await (
-//     await fetch(`${BASE_URL}/orgs/${org}/repos`, {
-//       method: "get",
-//       headers: { "Content-Type": "application/vnd.github+json", Authorization: `Bearer ${token}` },
-//     })
-//   ).json();
-// }
+    await Promise.all(
+      labels.map((l) => request(`${this.destination}/labels/${l.name}`, "delete", this.tokens.destToken)),
+    );
+
+    logger.info(`Labels deleted on ${this.destination}`);
+  }
+
+  public async createLabels(labels: GitHubLabel[]) {
+    logger.info(`Creating labels on ${this.origin}...`);
+
+    await Promise.all(
+      labels.map((l) => {
+        return request(
+          `${this.origin}/labels`,
+          "post",
+          this.tokens.originToken,
+          JSON.stringify({ name: l.name, color: l.color, description: l.description }),
+        );
+      }),
+    );
+
+    logger.info(`Labels created on ${this.origin}`);
+  }
+
+  public async confirmChoices() {
+    // confirm label stuff
+    let confirmed = await logger.prompt(
+      mapLabelsToConfirmation(`These will be added to \`${this.destination}\` from \`${this.origin}\``, this.toSync),
+      { type: "confirm", required: true },
+    );
+
+    if (!confirmed) {
+      logger.error("Stopping");
+      return false;
+    }
+
+    if (this.toDelete.length) {
+      const confirmed = await logger.prompt(
+        mapLabelsToConfirmation(`These will be removed from \`${this.destination}\`)`, this.toDelete),
+        { type: "confirm", required: true },
+      );
+
+      if (!confirmed) {
+        logger.error("Stopping");
+        return false;
+      }
+    } else {
+      logger.info(`Not deleting any labels from \`${this.destination}\``);
+    }
+
+    return true;
+  }
+
+  public async sync() {
+    // process
+    if (this.toDelete.length) {
+      await this.deleteLabels(this.toDelete);
+    }
+
+    await this.createLabels(this.toSync);
+  }
+}
